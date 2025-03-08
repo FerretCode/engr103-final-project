@@ -1,4 +1,5 @@
 from typing import Union
+import csv
 
 MAX_FILENAME_CHARS = 255
 
@@ -15,11 +16,22 @@ def validate_filename(filename: str) -> bool:
 
     return True
 
-
 def validate_operation(operation: str) -> bool:
     return operation in operations
 
+def validate_budget(budget: str) -> bool:
+    try:
+        float(budget)
+    except:
+        print("Not a valid numerical budget")
+        return False
+    
+    if float(budget) < 0:
+        print("Budget must be nonnegative")
+        return False
+    return True
 
+#should operations and categories not be in all caps, since we're using them as constants?
 operations = [
     "new",
     "modify",
@@ -37,6 +49,33 @@ categories = [
     ("Clothing", 0.05),
 ]
 
+def create_budget(budget: str, filename: str):
+    filename = filename + ".csv"
+
+    while not validate_budget(budget):
+        budget = input()
+    budget = float(budget)
+    
+    c = []
+    for entry in categories:
+        c.append((entry[0], budget * entry[1]))
+
+    with open(filename, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(c)
+    
+    for entry in c:
+        print(entry[0], ": $", entry[1])
+
+    file.close()
+
+def validate_path(filename: str) -> bool:
+    filename = filename + ".csv"
+    try:
+        with open(filename, 'r') as file:
+            return True
+    except FileNotFoundError:
+        return False
 
 """
 For all operation functions, they will return either:
@@ -44,16 +83,24 @@ For all operation functions, they will return either:
     - String of the error message if there was an error
 """
 
+def new(filename: str) -> Union[None, str]:
+    if not validate_path(filename):
+        return "File Already Exists, Use Modify Instead"
+    
+    budget = input("Enter your budget: ")
+    create_budget(budget)
+    return None
 
-def new() -> Union[None, str]:
-    pass
 
+def modify(filename: str) -> Union[None, str]:
+    if validate_path(filename):
+        return "File Does Not Exists, Use New Instead"
+    
+    budget = input("Enter your budget: ")
+    create_budget(budget)
+    return None
 
-def modify() -> Union[None, str]:
-    pass
-
-
-def view() -> Union[None, str]:
+def view(filename: str) -> Union[None, str]:
     pass
 
 
