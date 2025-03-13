@@ -101,7 +101,16 @@ def modify(filename: str) -> Union[None, str]:
     return None
 
 def view(filename: str) -> Union[None, str]:
-    pass
+    filename = filename + ".csv"
+    if not validate_path(filename):
+        return "File Does Not Exist, Use New Instead"
+    
+    with open(filename, 'r') as file:
+        content = file.read()
+        print(content)
+    return None
+
+
 
 
 def main():
