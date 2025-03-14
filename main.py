@@ -32,7 +32,7 @@ def validate_operation(operation: str) -> bool:
 
 def validate_budget(budget: str) -> bool:
     '''
-        Ensures a given user input is a valid budget 
+        Ensures a given user input is a valid budget
     '''
     try:
         float(budget)
@@ -57,7 +57,7 @@ def create_budget(budget: str, filename: str):
     filename = filename + ".csv"
 
     while not validate_budget(budget):
-        budget = input()
+        budget = input("Enter your budget: ")
     budget = float(budget)
 
     c = []
@@ -79,7 +79,7 @@ def file_exists(filename: str) -> bool:
         Checks if a file exists
     '''
     filename = filename + ".csv"
-    return os.path.isfile(filename)
+    return os.path.exists(filename)
 
 
 # should operations and categories not be in all caps, since we're using them as constants?
@@ -135,9 +135,10 @@ def view(filename: str) -> Union[None, str]:
     '''
         View an existing budget
     '''
-    filename = filename + ".csv"
-    if file_exists(filename):
+    if not file_exists(filename):
         return "File Does Not Exist, Use New Instead"
+
+    filename += ".csv"
 
     with open(filename, 'r') as file:
         content = file.read()
@@ -154,7 +155,7 @@ def main():
         operation = input(
             "What operation do you want to perform? (new, modify, view) ").lower()
         if not validate_operation(operation):
-            print("Please enter a valid operatio (new, modify, view).")
+            print("Please enter a valid operation (new, modify, view).")
             continue
 
         filename = input("What is the filename for your budget? ")
